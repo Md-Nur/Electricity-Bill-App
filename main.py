@@ -1,21 +1,39 @@
 from tkinter import *
+
+import mysql.connector
 # from PIL import ImageTk, Image
 root = Tk()
 NAME = "Electrical Bill"
 FONT = ("Helvetica",20)
 ROW = 0
 
-room_101 = IntVar(value=10)
-room_201 = IntVar(value=10)
-room_202 = IntVar(value=10)
-room_401 = IntVar(value=10)
-room_402 = IntVar(value=10)
-room_403 = IntVar(value=10)
-room_404 = IntVar(value=10)
+room_101 = IntVar()
+room_201 = IntVar()
+room_202 = IntVar()
+room_401 = IntVar()
+room_402 = IntVar()
+room_403 = IntVar()
+room_404 = IntVar()
 
 
+def dataBase():
+    print("DataBase")
+    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database="test_elec_bill")
+    cursor = conn.cursor()
+    # cursor.execute("select * from test_elec_bill.electricity;")
+    cursor.execute("INSERT INTO `test_elec_bill`.`electricity` (`id`, `Month`, `Unit`) VALUES (%s,%s,%s);", (1, "January", room_101.get()))
+    # cursor.execute('show databases')
+
+    conn.commit()
+    
+    print(cursor.fetchall(),"Done")
+    for i in cursor.fetchall():
+        print(i)
+    if conn:
+        print("Connected")
+    conn.close()
 def displayUnit():
-    global room_101, room_201, room_202, room_401, room_402, room_403, room_404
+    global room_101, room_201, room_202, room_401, room_402, room_403, room_404,ROW
     
     try:
         room_101.set(int(room101_unit.get()))
@@ -25,18 +43,38 @@ def displayUnit():
         room_402.set(int(room402_unit.get()))
         room_403.set(int(room403_unit.get()))
         room_404.set(int(room404_unit.get()))
-    except:
-        room_101.set(0)
-        room_201.set(0)
-        room_202.set(0)
-        room_401.set(0)
-        room_402.set(0)
-        room_403.set(0)
-        room_404.set(0)
+        room_101_label = Label(root, textvariable=room_101, font=FONT)
+        room_101_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_201_label = Label(root, textvariable=room_201, font=FONT)
+        room_201_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_202_label = Label(root, textvariable=room_202, font=FONT)
+        room_202_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_401_label = Label(root, textvariable=room_401, font=FONT)
+        room_401_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_402_label = Label(root, textvariable=room_402, font=FONT)
+        room_402_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_403_label = Label(root, textvariable=room_403, font=FONT)
+        room_403_label.grid(row=ROW, column=0)
+        ROW+=1
+        room_404_label = Label(root, textvariable=room_404, font=FONT)
+        room_404_label.grid(row=ROW, column=0)
+        ROW+=1
+        dataBase()
+    except Exception as e:
+        err = Label(root, text=f"{e}: \nPlease enter a number / You have to fill all the fields", font=FONT)
+        err.grid(row=ROW, column=0, columnspan=2)
+        ROW+=1
 
 
 
-
+    
+    
+    
 root.geometry("1000x500")
 root.minsize(1000, 500)
 root.title(NAME)
@@ -83,25 +121,5 @@ ROW+=1
 b1 = Button(root, text="Submit", command=displayUnit,padx=10,pady=10,font=FONT,fg='white',bg='blue')
 b1.grid(row=ROW,column=0,columnspan=2,padx=10,pady=10)
 ROW+=1
-room_101_label = Label(root, textvariable=room_101, font=FONT)
-room_101_label.grid(row=ROW, column=0)
-ROW+=1
-room_201_label = Label(root, textvariable=room_201, font=FONT)
-room_201_label.grid(row=ROW, column=0)
-ROW+=1
-room_202_label = Label(root, textvariable=room_202, font=FONT)
-room_202_label.grid(row=ROW, column=0)
-ROW+=1
-room_401_label = Label(root, textvariable=room_401, font=FONT)
-room_401_label.grid(row=ROW, column=0)
-ROW+=1
-room_402_label = Label(root, textvariable=room_402, font=FONT)
-room_402_label.grid(row=ROW, column=0)
-ROW+=1
-room_403_label = Label(root, textvariable=room_403, font=FONT)
-room_403_label.grid(row=ROW, column=0)
-ROW+=1
-room_404_label = Label(root, textvariable=room_404, font=FONT)
-room_404_label.grid(row=ROW, column=0)
-ROW+=1
+
 root.mainloop()
