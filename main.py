@@ -1,125 +1,100 @@
+from datetime import datetime
 from tkinter import *
+from tkinter import ttk
 
 import mysql.connector
 # from PIL import ImageTk, Image
-root = Tk()
-NAME = "Electrical Bill"
-FONT = ("Helvetica",20)
-ROW = 0
-
-room_101 = IntVar()
-room_201 = IntVar()
-room_202 = IntVar()
-room_401 = IntVar()
-room_402 = IntVar()
-room_403 = IntVar()
-room_404 = IntVar()
-
+Database = "test_elec_bill"
 
 def dataBase():
+    global room_101, room_201, room_202, room_401, room_402, room_403, room_404
+    pmon = months[months.index(month.get())-1]
     print("DataBase")
-    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database="test_elec_bill")
+    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
     cursor = conn.cursor()
     # cursor.execute("select * from test_elec_bill.electricity;")
-    cursor.execute("INSERT INTO `test_elec_bill`.`electricity` (`id`, `Month`, `Unit`) VALUES (%s,%s,%s);", (1, "January", room_101.get()))
-    # cursor.execute('show databases')
-
-    conn.commit()
     
-    print(cursor.fetchall(),"Done")
-    for i in cursor.fetchall():
-        print(i)
-    if conn:
-        print("Connected")
+    # Query Demo : INSERT INTO `test_elec_bill`.`miter` (`1st_main`, `1st_sub1`, `1st_sub2`, `2nd_main`, `2nd_sub1`, `2nd_sub2`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+
+    cursor.execute("INSERT INTO `test_elec_bill`.`miter` (`1st_main`, `1st_sub1`, `1st_sub2`, `2nd_main`, `2nd_sub1`, `2nd_sub2`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (room_101.room_unit.get(),room_102.room_unit.get(),room_103.room_unit.get(),room_201.room_unit.get(),room_202.room_unit.get(),room_203.room_unit.get(),room_401.room_unit.get(),room_402.room_unit.get(),room_403.room_unit.get(),room_404.room_unit.get(),month.get(),year.get()))
+    # cursor.execute('show databases')
+    collect = conn.cursor()
+    collect.execute(f"SELECT * FROM `test_elec_bill`.`miter` WHERE `month`={pmon} AND `year`={year};")
+    print(collect.fetchall(),"Done")
+    conn.commit()
     conn.close()
 def displayUnit():
-    global room_101, room_201, room_202, room_401, room_402, room_403, room_404,ROW
-    
-    try:
-        room_101.set(int(room101_unit.get()))
-        room_201.set(int(room201_unit.get()))
-        room_202.set(int(room202_unit.get()))
-        room_401.set(int(room401_unit.get()))
-        room_402.set(int(room402_unit.get()))
-        room_403.set(int(room403_unit.get()))
-        room_404.set(int(room404_unit.get()))
-        room_101_label = Label(root, textvariable=room_101, font=FONT)
-        room_101_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_201_label = Label(root, textvariable=room_201, font=FONT)
-        room_201_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_202_label = Label(root, textvariable=room_202, font=FONT)
-        room_202_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_401_label = Label(root, textvariable=room_401, font=FONT)
-        room_401_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_402_label = Label(root, textvariable=room_402, font=FONT)
-        room_402_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_403_label = Label(root, textvariable=room_403, font=FONT)
-        room_403_label.grid(row=ROW, column=0)
-        ROW+=1
-        room_404_label = Label(root, textvariable=room_404, font=FONT)
-        room_404_label.grid(row=ROW, column=0)
-        ROW+=1
-        dataBase()
-    except Exception as e:
-        err = Label(root, text=f"{e}: \nPlease enter a number / You have to fill all the fields", font=FONT)
-        err.grid(row=ROW, column=0, columnspan=2)
-        ROW+=1
+    global room_101, room_201, room_202, room_401, room_402, room_403, room_404
+    roomList = [room_101, room_201, room_202, room_401, room_402, room_403, room_404]
+    for rl in roomList:
+        print(rl.room_unit.get())
+    print(month.get(), year.get())
 
-
-
+class room():
+    def __init__(self,room_no):
+        global row,tableFrame
+        self.room_no = room_no
+        self.room_label = Label(tableFrame, text=f"{room_no} মিটারের ইউনিটঃ ", font=FONT)
+        self.room_label.grid(row=row, column=0,padx=5,pady=5)
+        self.room_unit = Entry(tableFrame, font=FONT)
+        self.room_unit.grid(row=row, column=1)
+        row+=1
     
     
     
-root.geometry("1000x500")
-root.minsize(1000, 500)
-root.title(NAME)
-title = Label(root, text=NAME, font=('Arial', 30))
-title.grid(row=ROW, column=0, columnspan=2)
-ROW+=1
-# [101,201,202,401,402,403,40
-room101_label = Label(root, text="Enter Unit For 101:", font=FONT)
-room101_label.grid(row=ROW, column=0)
-room101_unit = Entry(root, font=FONT)
-room101_unit.grid(row=ROW, column=1)
-ROW+=1
-room201_label = Label(root, text="Enter Unit For 201:", font=FONT)
-room201_label.grid(row=ROW, column=0)
-room201_unit = Entry(root, font=FONT)
-room201_unit.grid(row=ROW, column=1)
-ROW+=1
-room202_label = Label(root, text="Enter Unit For 202:", font=FONT)
-room202_label.grid(row=ROW, column=0)
-room202_unit = Entry(root, font=FONT)
-room202_unit.grid(row=ROW, column=1)
-ROW+=1
-room401_label = Label(root, text="Enter Unit For 401:", font=FONT)
-room401_label.grid(row=ROW, column=0)
-room401_unit = Entry(root, font=FONT)
-room401_unit.grid(row=ROW, column=1)
-ROW+=1
-room402_label = Label(root, text="Enter Unit For 402:", font=FONT)
-room402_label.grid(row=ROW, column=0)
-room402_unit = Entry(root, font=FONT)
-room402_unit.grid(row=ROW, column=1)
-ROW+=1
-room403_label = Label(root, text="Enter Unit For 403:", font=FONT)
-room403_label.grid(row=ROW, column=0)
-room403_unit = Entry(root, font=FONT)
-room403_unit.grid(row=ROW, column=1)
-ROW+=1
-room404_label = Label(root, text="Enter Unit For 404:", font=FONT)
-room404_label.grid(row=ROW, column=0)
-room404_unit = Entry(root, font=FONT)
-room404_unit.grid(row=ROW, column=1)
-ROW+=1
+if __name__ == '__main__':
+    root = Tk()
+    FONT = ("Helvetica",15)
+    months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    root.geometry("1000x500")
+    root.minsize(1000, 500)
+    root.title("বিদ্যুৎ বিল")
 
-b1 = Button(root, text="Submit", command=displayUnit,padx=10,pady=10,font=FONT,fg='white',bg='blue')
-b1.grid(row=ROW,column=0,columnspan=2,padx=10,pady=10)
-ROW+=1
+    titleFrame = Frame(root)
+    titleFrame.pack()
 
-root.mainloop()
+    title = Label(titleFrame, text="✨বিদ্যুৎ বিল✨", font=('Arial', 30),padx=10,pady=10)
+    title.pack()
+
+    row = 0
+    tableFrame = Frame(root,padx=10,pady=10)
+    tableFrame.pack()
+
+    
+    room_101 = room("নিচ তলার মেইন")
+    room_102 = room("নিচ তলার সাব ১ নং")
+    room_103 = room("নিচ তলার সাব ২ নং")
+    room_201 = room("২ তলার মেইন")
+    room_202 = room("২ তলার সাব ১ নং")
+    room_203 = room("২ তলার সাব ২ নং")
+    room_401 = room("৪ তলার সাব ১ নং")
+    room_402 = room("৪ তলার সাব ২ নং")
+    room_403 = room("৪ তলার সাব ৩ নং")
+    room_404 = room("৪ তলার সাব ৪ নং")
+    
+    tableFrame2 =Frame(root,padx=10,pady=10)
+    tableFrame2.pack()
+    month_label = Label(tableFrame2, text="মাসঃ ", font=FONT)
+    month_label.grid(row=0, column=0,padx=5,pady=5)
+    month = ttk.Combobox(tableFrame2,font=FONT, values=months)
+    month.current(datetime.now().month-2)
+    month.grid(row=0,column=1,padx=5,pady=5)
+    
+    year_label = Label(tableFrame2, text="বছরঃ ", font=FONT)
+    year_label.grid(row=0, column=2,padx=5,pady=5)
+    year = Entry(tableFrame2, font=FONT)
+    year.insert(0,datetime.now().year)
+    year.grid(row=0,column=3,padx=5,pady=5)
+    
+    rate_label = Label(tableFrame2, text="রেটঃ ", font=FONT)
+    rate_label.grid(row=0, column=4,padx=5,pady=5)
+    rate = Entry(tableFrame2, font=FONT)
+    rate.insert(0,5.45)
+    rate.grid(row=0,column=5,padx=5,pady=5)
+    
+    buttonFrame = Frame(root,padx=10,pady=10)
+    buttonFrame.pack()
+    button = Button(buttonFrame, text="সাবমিট", font=FONT, command=dataBase)
+    button.pack()
+    root.mainloop()
+    
