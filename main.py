@@ -7,33 +7,49 @@ import mysql.connector
 # from PIL import ImageTk, Image
 Database = "test_elec_bill"
 
+def preData(roomNo):
+    global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months
+    cpmon = months[datetime.now().month-3]
+    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
+    
+    room_insert = conn.cursor()
+    room_collect = conn.cursor()
+    room_collect.execute("SELECT * FROM `test_elec_bill`.`room` WHERE `month`=%s AND `year`=%s AND `room_no` = %s;", (cpmon, datetime.now().year,roomNo))
+    
+    pRoomData = room_collect.fetchall()[0]
+    print(pRoomData)
+    
+    return pRoomData
+    # room_insert.execute("INSERT INTO `test_elec_bill`.`room` ( `room_no`, `year`, `month`, `name`, `rate`, `room_fare`, `room_unit`, `room_advance`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);" ( '101', '2022', month.get(), 'শরীফ', '5.45', '7500', '34556', '0'))
+
 def dataBase():
-    global room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404
+    global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months
+    pmon = months[months.index(month.get())-1]
+    
     room_list = [room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404]
     room_units = [room.room_unit.get() for room in room_list]
     room_units.extend([month.get(), year.get()])
     print(room_units)
-    pmon = months[months.index(month.get())-1]
     pyear = year.get()
     if pmon == "December":
         pyear -= 1
-    
+
     conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
     cursor = conn.cursor()
-    
+
     cursor.execute("INSERT INTO `test_elec_bill`.`miter` (`1st_main`, `1st_sub1`, `1st_sub2`, `2nd_main`, `2nd_sub1`, `2nd_sub2`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", tuple(room_units))
-    
+
     collect = conn.cursor()
     collect.execute("SELECT * FROM `test_elec_bill`.`miter` WHERE `month`=%s AND `year`=%s;", (pmon, year.get()))
     pdata = collect.fetchall()[0][1:11]
-    
     print(pdata)
     
     room_net_units = []
     for rl,rp in zip(room_list,pdata):
         room_net_units.append(int(rl.room_unit.get()) - rp)
+    room_net_units[2] = room_net_units[2] - room_net_units[1]
+    room_net_units[5] = room_net_units[5] - room_net_units[4] - room_net_units[3]
     print(room_net_units)
-    
     
     conn.commit()
     conn.close()
@@ -47,10 +63,12 @@ def displayUnit():
     print(month.get(), year.get())
 
 class room():
-    def __init__(self,room_no):
+    def __init__(self,room_no,room_name,room_fare):
         global row,tableFrame
+        self.room_name = room_name
+        
         self.room_no = room_no
-        self.room_label = Label(tableFrame, text=f"{room_no} :", font=FONT)
+        self.room_label = Label(tableFrame, text=f"{self.room_name} ({room_no}) :", font=FONT)
         self.room_label.grid(row=row, column=0,padx=5,pady=5)
         
         self.room_unit = Entry(tableFrame, font=FONT)
@@ -58,14 +76,12 @@ class room():
         
         self.room_fare = Entry(tableFrame, font=FONT)
         self.room_fare.grid(row=row, column=2 , padx=5,pady=5)
-        self.room_fare.insert(0,5000)
+        self.room_fare.insert(0,room_fare)
         
         self.room_advance = Entry(tableFrame, font=FONT)
         self.room_advance.grid(row=row, column=3 , padx=5,pady=5)
         self.room_advance.insert(0,0)
         row+=1
-    
-    
     
 if __name__ == '__main__':
     root = Tk()
@@ -81,6 +97,8 @@ if __name__ == '__main__':
     title = Label(titleFrame, text="✨ঘর ভাড়া ও বিদ্যুৎ বিল✨", font=('Arial', 30),padx=10,pady=10)
     title.pack()
 
+    
+    
     row = 0
     tableFrame = Frame(root,padx=10,pady=10)
     tableFrame.pack()
@@ -95,16 +113,26 @@ if __name__ == '__main__':
     table_advance_title.grid(row=row, column=3,padx=5,pady=5)
     row+=1
     
-    room_101 = room("নিচ তলার সাব ১ (টিনশেড) নং")
-    room_102 = room("নিচ তলার সাব ২ নং")
-    room_103 = room("নিচ তলার মেইন")
-    room_201 = room("২ তলার সাব ১ নং")
-    room_202 = room("২ তলার সাব ২ নং")
-    room_203 = room("২ তলার মেইন")
-    room_401 = room("৪ তলার সাব ১ নং")
-    room_402 = room("৪ তলার সাব ২ নং")
-    room_403 = room("৪ তলার সাব ৩ নং")
-    room_404 = room("৪ তলার সাব ৪ নং")
+    pr101 = preData(101)
+    room_101 = room("নিচ তলার সাব ১ (টিনশেড) নং",room_name=pr101[4],room_fare=pr101[-3])
+    pr102 = preData(102)
+    room_102 = room("নিচ তলার সাব ২ নং",room_name=pr102[4],room_fare=pr102[-3])
+    pr103 = preData(103)
+    room_103 = room("নিচ তলার মেইন",room_name=pr103[4],room_fare=pr103[-3])
+    pr201 = preData(201)
+    room_201 = room("২ তলার সাব ১ নং",room_name=pr201[4],room_fare=pr201[-3])
+    pr202 = preData(201)
+    room_202 = room("২ তলার সাব ২ নং",room_name=pr202[4],room_fare=pr202[-3])
+    pr203 = preData(202)
+    room_203 = room("২ তলার মেইন",room_name=pr203[4],room_fare=pr203[-3])
+    pr401 = preData(203)
+    room_401 = room("৪ তলার সাব ১ নং",room_name=pr401[4],room_fare=pr401[-3])
+    pr402 = preData(401)
+    room_402 = room("৪ তলার সাব ২ নং",room_name=pr402[4],room_fare=pr402[-3])
+    pr403 = preData(403)
+    room_403 = room("৪ তলার সাব ৩ নং",room_name=pr403[4],room_fare=pr403[-3])
+    pr404 = preData(404)
+    room_404 = room("৪ তলার সাব ৪ নং",room_name=pr404[4],room_fare=pr404[-3])
     
     tableFrame2 =Frame(root,padx=10,pady=10)
     tableFrame2.pack()
@@ -123,7 +151,7 @@ if __name__ == '__main__':
     rate_label = Label(tableFrame2, text="রেটঃ ", font=FONT)
     rate_label.grid(row=0, column=4,padx=5,pady=5)
     rate = Entry(tableFrame2, font=FONT)
-    rate.insert(0,5.45)
+    rate.insert(0,pr102[-4])
     rate.grid(row=0,column=5,padx=5,pady=5)
     
     buttonFrame = Frame(root,padx=10,pady=10)
