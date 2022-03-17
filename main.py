@@ -1,16 +1,14 @@
 from datetime import datetime
-from re import L
 from tkinter import *
 from tkinter import ttk
-
 import mysql.connector
-# from PIL import ImageTk, Image
-Database = "test_elec_bill"
+from db import *
+from pdf import *
 
 def preData(roomNo):
     global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months
     cpmon = months[datetime.now().month-3]
-    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
+    conn = mysql.connector.connect(host=Host, user=User, password=Password, database=Database)
     
     room_collect = conn.cursor()
     room_collect.execute("SELECT * FROM `test_elec_bill`.`room` WHERE `month`=%s AND `year`=%s AND `room_no` = %s;", (cpmon, datetime.now().year,roomNo))
@@ -20,28 +18,40 @@ def preData(roomNo):
     conn.commit()
     conn.close()
     return pRoomData
-    # room_insert.execute("INSERT INTO `test_elec_bill`.`room` ( `room_no`, `year`, `month`, `name`, `rate`, `room_fare`, `room_unit`, `room_advance`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);" ( '101', '2022', month.get(), 'শরীফ', '5.45', '7500', '34556', '0'))
-
+    
 
 def dbRoom(room_net_units):
     global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months
     
+    net_info_list = []
     room_list = [room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404]
     
-    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
+    conn = mysql.connector.connect(host=Host, user=User, password=Password, database=Database)
     room_insert = conn.cursor()
     
     for rnu,rl in zip(room_net_units,room_list):
+        
         inpt = (int(rl.room_no[:3]),year.get() , month.get(), rl.room_name, rate.get(), rl.room_fare.get(), rnu, rl.room_advance.get())
+        net_dict = {
+            "room_no": inpt[0],
+            "year": inpt[1],
+            "month": inpt[2],
+            "name": inpt[3],
+            "rate": inpt[4],
+            "fare": inpt[5],
+            "unit": inpt[6],
+            "advance": inpt[7]
+        }
+        net_info_list.append(net_dict)
         room_insert.execute("INSERT INTO `test_elec_bill`.`room` ( `room_no`, `year`, `month`, `name`, `rate`, `room_fare`, `room_unit`, `room_advance`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);",inpt )
-    # INSERT INTO `test_elec_bill`.`room` (`room_no`, `year`, `month`, `name`, `rate`, `room_fare`, `room_unit`, `room_advance`) VALUES ('101', '2021', 'December', 'Shorif', '5.45', '7500', '3400', '0');
+   
     print("Data Inserted")
     conn.commit()
     conn.close()
+    showPdf(net_info_list)
 
-
-def dataBase():
-    global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months
+def dbMiter():
+    global pmon ,room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404,months, net_info
     pmon = months[months.index(month.get())-1]
     
     room_list = [room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404]
@@ -49,7 +59,7 @@ def dataBase():
     room_units.extend([month.get(), year.get()])
     print(room_units)
     
-    conn = mysql.connector.connect(host="localhost", user="root", password="khelahobe", database=Database)
+    conn = mysql.connector.connect(host=Host, user=User, password=Password, database=Database)
     cursor = conn.cursor()
 
     cursor.execute("INSERT INTO `test_elec_bill`.`miter` (`1st_main`, `1st_sub1`, `1st_sub2`, `2nd_main`, `2nd_sub1`, `2nd_sub2`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", tuple(room_units))
@@ -72,23 +82,16 @@ def dataBase():
     conn.close()
     dbRoom(room_net_units)
     
-    
-def displayUnit():
-    global room_101, room_201, room_202, room_401, room_402, room_403, room_404
-    roomList = [room_101, room_201, room_202, room_401, room_402, room_403, room_404]
-    for rl in roomList:
-        print(rl.room_unit.get())
-    print(month.get(), year.get())
 
 class room():
     def __init__(self,room_no,room_name,room_fare):
         global row,tableFrame
         self.room_name = room_name
-        
+
         self.room_no = room_no
         self.room_label = Label(tableFrame, text=f"{self.room_name} ({self.room_no}) :", font=FONT)
         self.room_label.grid(row=row, column=0,padx=5,pady=5)
-        
+
         self.room_unit = Entry(tableFrame, font=FONT)
         self.room_unit.grid(row=row, column=1 , padx=5,pady=5)
         
@@ -115,8 +118,6 @@ if __name__ == '__main__':
     title = Label(titleFrame, text="✨ঘর ভাড়া ও বিদ্যুৎ বিল✨", font=('Arial', 30),padx=10,pady=10)
     title.pack()
 
-    
-    
     row = 0
     tableFrame = Frame(root,padx=10,pady=10)
     tableFrame.pack()
@@ -174,7 +175,6 @@ if __name__ == '__main__':
     
     buttonFrame = Frame(root,padx=10,pady=10)
     buttonFrame.pack()
-    button = Button(buttonFrame, text="সাবমিট", font=FONT, command=dataBase)
+    button = Button(buttonFrame, text="সাবমিট", font=FONT, command=dbMiter)
     button.pack()
     root.mainloop()
-    
