@@ -1,7 +1,9 @@
 from http.client import SWITCHING_PROTOCOLS
 from unittest import case
-from fpdf import FPDF
+from fpdf import FPDF, HTMLMixin
 
+class MyFPDF(FPDF, HTMLMixin):
+    pass
 
 def bijoyMash(mash):
     if mash == "January":
@@ -57,10 +59,11 @@ def bijoyName(name):
 
 def showPdf(details):
     print(details)
-    pdf = FPDF("P", "mm", "A4")
+    pdf = MyFPDF("P", "mm", "A4")
     pdf.add_page()
     pdf.add_font("SutonnyMJ", "", "SutonnyMJ Regular.ttf", uni=True)
     pdf.set_font("SutonnyMJ", size=15)
+    
     for dt in details:
         for infoDict in dt:
             if infoDict == "gvm":
@@ -68,9 +71,9 @@ def showPdf(details):
             if infoDict == "bvg":
                 dt[infoDict] = bijoyName(dt[infoDict])
 
-            strings = f"{infoDict} : {dt[infoDict]}"
-            pdf.cell(txt=strings, ln=1)
-        pdf.ln(10)
+            
+    # pdf.multi_cell(30,txt=strings, ln=1,border=1)
+   
     pdf.output("test.pdf")
 
 
