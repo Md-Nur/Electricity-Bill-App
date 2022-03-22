@@ -1,20 +1,20 @@
 from db import *
 import mysql
-from pdf import *
+from page import *
 
 months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "জানুয়ারি",
+    "ফেব্রুয়ারি",
+    "মার্চ",
+    "এপ্রিল",
+    "মে",
+    "জুন",
+    "জুলাই",
+    "আগস্ট",
+    "সেপ্টেম্বর",
+    "অক্টোবর",
+    "নভেম্বর",
+    "ডিসেম্বর",
 ]
 
 
@@ -23,6 +23,8 @@ def dbRoom(
     month,
     year,
     rate,
+    pdata,
+    pmon,
     room_101,
     room_102,
     room_103,
@@ -34,7 +36,7 @@ def dbRoom(
     room_403,
     room_404,
 ):
-    global pmon, months
+    global months
 
     net_info_list = []
     room_list = [
@@ -55,7 +57,7 @@ def dbRoom(
     )
     room_insert = conn.cursor()
 
-    for rnu, rl in zip(room_net_units, room_list):
+    for rnu, rl, pd in zip(room_net_units, room_list, pdata):
 
         inpt = (
             int(rl.room_no[:3]),
@@ -71,20 +73,30 @@ def dbRoom(
             int(rl.room_toylet.get()),
             int(rl.room_frize.get()),
         )
+        # int(rl.room_unit.get()),
+        # int(pd),
         net_dict = {
-            "iæg bs": inpt[0],  # room_no
-            "eQi": inpt[1],  # year
-            "gvm": inpt[2],  # month
-            "bvg": inpt[3],  # name
-            "‡iU": inpt[4],  # rate
-            "fvov": inpt[5],  # fare
-            "BDwbU": inpt[6],  # unit
-            "AwMªg": inpt[7],  # advance
-            "gqjv": inpt[8],  # dust
-            "ivbœvNi": inpt[9],  # kichen
-            "Uq‡jU": inpt[10],  # toylet
-            "wd&ªR": inpt[11],  # frize
-            "wej": int(inpt[4] * inpt[6]),  # bill
+            "রুম নং": int(rl.room_no[:3]),  # room_no
+            "বছর": int(year.get()),  # year
+            "নাম": rl.room_name,  # name
+            "ভাড়া": f"{rl.room_fare.get()} টাকা",  # fare
+            f"{month.get()}": f"{rl.room_unit.get()} ইউ.",  # month
+            f"{pmon}": f"{pd} ইউ.",  # previous month
+            "ইউনিট": f"{rnu} ইউ.",  # unit
+            "রেট": f"{rate.get()} টাকা",  # rate
+            "বিদ্যুৎ বিল": f"{int(float(rate.get()) * rnu)} টাকা",  # bill
+            "ময়লা": f"{rl.room_dust.get()} টাকা",  # dust
+            "রান্নাঘর": f"{rl.room_kichen.get()} টাকা",  # kichen
+            "টয়লেট": f"{rl.room_toylet.get()} টাকা",  # toylet
+            "ফ্রিজ": f"{rl.room_frize.get()} টাকা",  # frize
+            "অগ্রিম": f"{rl.room_advance.get()} টাকা",  # advance
+            "মোট": f"""{int(rl.room_fare.get())
+            + int(float(rate.get()) * rnu)
+            + int(rl.room_dust.get())
+            + int(rl.room_kichen.get())
+            + int(rl.room_toylet.get())
+            + int(rl.room_frize.get())
+            - int(rl.room_advance.get())} টাকা""",  # total
         }
         net_info_list.append(net_dict)
         room_insert.execute(
@@ -92,10 +104,12 @@ def dbRoom(
             inpt,
         )
 
-    print("Data Inserted")
+    # # print("Data Inserted")
     conn.commit()
     conn.close()
-    showPdf(net_info_list)
+    # showPdf(net_info_list)
+    output(net_info_list)
+    # # print(net_info_list)
 
 
 def dbMiter(
@@ -130,7 +144,7 @@ def dbMiter(
     ]
     room_units = [room.room_unit.get() for room in room_list]
     room_units.extend([month.get(), year.get()])
-    print(room_units)
+    # # print(room_units)
 
     conn = mysql.connector.connect(
         host=Host, user=User, password=Password, database=Database
@@ -148,17 +162,17 @@ def dbMiter(
         (pmon, year.get()),
     )
     try:
-        pdata = collect.fetchall()[0][1:11]
+        pdata = collect.fetchall()[-1][1:11]
     except IndexError:
         pdata = pmon
-    print(pdata)
+    # # print(pdata)
 
     room_net_units = []
     for rl, rp in zip(room_list, pdata):
         room_net_units.append(int(rl.room_unit.get()) - rp)
-    room_net_units[2] = room_net_units[2] - room_net_units[1]
-    room_net_units[5] = room_net_units[5] - room_net_units[4] - room_net_units[3]
-    print(room_net_units)
+    # room_net_units[2] = room_net_units[2] - room_net_units[1]
+    # room_net_units[5] = room_net_units[5] - room_net_units[4] - room_net_units[3]
+    # print(room_net_units)
     conn.commit()
     conn.close()
     dbRoom(
@@ -166,6 +180,8 @@ def dbMiter(
         month,
         year,
         rate,
+        pdata,
+        pmon,
         room_101,
         room_102,
         room_103,
