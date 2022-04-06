@@ -76,9 +76,9 @@ def dbRoom(
         # int(rl.room_unit.get()),
         # int(pd),
         net_dict = {
+            "নাম": rl.room_name,  # name
             "রুম নং": int(rl.room_no[:3]),  # room_no
             "বছর": int(year.get()),  # year
-            "নাম": rl.room_name,  # name
             "ভাড়া": f"{rl.room_fare.get()} টাকা",  # fare
             f"{month.get()}": f"{rl.room_unit.get()} ইউ.",  # month
             f"{pmon}": f"{pd} ইউ.",  # previous month
@@ -144,7 +144,7 @@ def dbMiter(
     ]
     room_units = [room.room_unit.get() for room in room_list]
     room_units.extend([month.get(), year.get()])
-    # # print(room_units)
+    # print(room_units)
 
     conn = mysql.connector.connect(
         host=Host, user=User, password=Password, database=Database
@@ -152,7 +152,7 @@ def dbMiter(
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO `test_elec_bill`.`miter` (`1st_main`, `1st_sub1`, `1st_sub2`, `2nd_main`, `2nd_sub1`, `2nd_sub2`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+        "INSERT INTO `test_elec_bill`.`miter` ( `1st_sub1`, `1st_sub2`,`1st_main`, `2nd_sub1`, `2nd_sub2`,`2nd_main`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
         tuple(room_units),
     )
 

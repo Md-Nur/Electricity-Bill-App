@@ -5,6 +5,20 @@ import mysql.connector
 from db import *
 from room_miter import *
 
+months = [
+        "জানুয়ারি",
+        "ফেব্রুয়ারি",
+        "মার্চ",
+        "এপ্রিল",
+        "মে",
+        "জুন",
+        "জুলাই",
+        "আগস্ট",
+        "সেপ্টেম্বর",
+        "অক্টোবর",
+        "নভেম্বর",
+        "ডিসেম্বর",
+    ]
 
 def preData(roomNo):
     global pmon, room_101, room_102, room_103, room_201, room_202, room_203, room_401, room_402, room_403, room_404, months
@@ -22,7 +36,8 @@ def preData(roomNo):
     pRoomData = room_collect.fetchall()[-1]
     conn.commit()
     conn.close()
-    # print(pRoomData)
+    print(pRoomData)
+    print(cpmon)
     return pRoomData
 
 
@@ -122,12 +137,12 @@ if __name__ == "__main__":
 
 
     title = Label(
-        titleFrame, text="⚡ঘর ভাড়া ও বিদ্যুৎ বিল⚡", font=("Arial", 30), padx=10, pady=10,bg="lightblue"
+        titleFrame, text="⚡ঘর ভাড়া ও বিদ্যুৎ বিল⚡", font=("Arial", 30), padx=10, pady=10,bg="black",fg="white"
     )
     title.pack()
 
     row = 0
-    tableFrame = Frame(root, padx=10, pady=10, bd=5, relief=GROOVE, bg="purple")
+    tableFrame = Frame(root, padx=10, pady=10, bd=5, relief=GROOVE, bg="blue")
     tableFrame.pack()
 
     table_name_title = Label(tableFrame, text="রুমের নাম", font=FONT)
@@ -163,7 +178,7 @@ if __name__ == "__main__":
     room_102 = room(
         "102 নিচ তলার সাব ২ নং",
         room_name=pr102[4],
-        room_fare=pr102[7],
+        room_fare=pr102[6],
         room_dust=pr102[-5],
         room_kichen=pr102[-4],
         room_toylet=pr102[-3],
@@ -173,7 +188,7 @@ if __name__ == "__main__":
     room_103 = room(
         "103 নিচ তলার মেইন",
         room_name=pr103[4],
-        room_fare=pr103[7],
+        room_fare=pr103[6],
         room_dust=pr103[-5],
         room_kichen=pr103[-4],
         room_toylet=pr103[-3],
@@ -183,7 +198,7 @@ if __name__ == "__main__":
     room_201 = room(
         "201 ২ তলার সাব ১ নং",
         room_name=pr201[4],
-        room_fare=pr201[7],
+        room_fare=pr201[6],
         room_dust=pr201[-5],
         room_kichen=pr201[-4],
         room_toylet=pr201[-3],
@@ -193,7 +208,7 @@ if __name__ == "__main__":
     room_202 = room(
         "202 ২ তলার সাব ২ নং",
         room_name=pr202[4],
-        room_fare=pr202[7],
+        room_fare=pr202[6],
         room_dust=pr202[-5],
         room_kichen=pr202[-4],
         room_toylet=pr202[-3],
@@ -203,7 +218,7 @@ if __name__ == "__main__":
     room_203 = room(
         "203 ২ তলার মেইন",
         room_name=pr203[4],
-        room_fare=pr203[7],
+        room_fare=pr203[6],
         room_dust=pr203[-5],
         room_kichen=pr203[-4],
         room_toylet=pr203[-3],
@@ -213,7 +228,7 @@ if __name__ == "__main__":
     room_401 = room(
         "401 ৪ তলার সাব ১ নং",
         room_name=pr401[4],
-        room_fare=pr401[7],
+        room_fare=pr401[6],
         room_dust=pr401[-5],
         room_kichen=pr401[-4],
         room_toylet=pr401[-3],
@@ -223,7 +238,7 @@ if __name__ == "__main__":
     room_402 = room(
         "402 ৪ তলার সাব ২ নং",
         room_name=pr402[4],
-        room_fare=pr402[7],
+        room_fare=pr402[6],
         room_dust=pr402[-5],
         room_kichen=pr402[-4],
         room_toylet=pr402[-3],
@@ -233,7 +248,7 @@ if __name__ == "__main__":
     room_403 = room(
         "403 ৪ তলার সাব ৩ নং",
         room_name=pr403[4],
-        room_fare=pr403[7],
+        room_fare=pr403[6],
         room_dust=pr403[-5],
         room_kichen=pr403[-4],
         room_toylet=pr403[-3],
@@ -243,7 +258,7 @@ if __name__ == "__main__":
     room_404 = room(
         "404 ৪ তলার সাব ৪ নং",
         room_name=pr404[4],
-        room_fare=pr404[7],
+        room_fare=pr404[6],
         room_dust=pr404[-5],
         room_kichen=pr404[-4],
         room_toylet=pr404[-3],

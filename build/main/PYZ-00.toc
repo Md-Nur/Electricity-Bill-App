@@ -895,17 +895,17 @@
    'c:\\users\\muhammad '
    'nur\\appdata\\local\\programs\\python\\python39\\lib\\stat.py',
    'PYMODULE'),
-  ('tracemalloc',
+  ('_py_abc',
    'c:\\users\\muhammad '
-   'nur\\appdata\\local\\programs\\python\\python39\\lib\\tracemalloc.py',
+   'nur\\appdata\\local\\programs\\python\\python39\\lib\\_py_abc.py',
    'PYMODULE'),
   ('stringprep',
    'c:\\users\\muhammad '
    'nur\\appdata\\local\\programs\\python\\python39\\lib\\stringprep.py',
    'PYMODULE'),
-  ('_py_abc',
+  ('tracemalloc',
    'c:\\users\\muhammad '
-   'nur\\appdata\\local\\programs\\python\\python39\\lib\\_py_abc.py',
+   'nur\\appdata\\local\\programs\\python\\python39\\lib\\tracemalloc.py',
    'PYMODULE'),
   ('room_miter', 'F:\\Electriciy Bill\\room_miter.py', 'PYMODULE'),
   ('page', 'F:\\Electriciy Bill\\page.py', 'PYMODULE'),
