@@ -3,53 +3,55 @@ from os import system
 
 def output(info):
     s1 = """
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="style.css">
 
-    <style>
-         body {
-            margin: 0;
-            padding: 0;
-            background-color: #FAFAFA;
-            font: 12pt "Tahoma";
-        }
-        .page {
-            width: 29.6cm;
-            height: 20.9cm;
-            display: flex;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
-        }
+        <style>
+                body {
+                        margin: 0;
+                        padding: 0;
+                        background-color: #FAFAFA;
+                        font: 14pt "Tahoma";
+                }
 
-        .canv {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-evenly;
-        }
+                .page {
+                        width: 20.9cm;
+                        height: 29.6cm;
+                        display: flex;
+                        box-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
+                }
 
-        .items {
-            border: 1px solid black;
-            padding: 5px;
-            width: 200px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+                .canv {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        justify-content: space-evenly;
+                }
 
-        }
-    </style>
+                .items {
+                        border: 1px solid black;
+                        padding: 5px;
+                        width: 200px;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+
+                }
+        </style>
 </head>
+
 <body>
-    <div class="book">
-        <div class="page">
-            <div class="subpage canv">
-            
+        <div class="book">
+                <div class="page">
+                        <div class="subpage canv">
     """
-   
+
     s2 = """
     </div>
         </div>
@@ -79,22 +81,6 @@ def output(info):
     system('output.html')
 if __name__ == "__main__":
     demo = [
-        {
-            "রুম নং": 101,
-            "বছর": 2022,
-            "মাস": "March",
-            "নাম": "Shorif",
-            "রেট": 5.72,
-            "ভাড়া": 7500,
-            "ইউনিট": 3,
-            "অগ্রিম": 0,
-            "ময়লা": 0,
-            "রান্নাঘর": 0,
-            "টয়লেট": 0,
-            "ফ্রিজ": 0,
-            "বিল": 17,
-            "মোট": 7517,
-        },
         {
             "রুম নং": 102,
             "বছর": 2022,

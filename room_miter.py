@@ -27,7 +27,6 @@ def dbRoom(
     pmon,
     room_101,
     room_102,
-    room_103,
     room_201,
     room_202,
     room_203,
@@ -42,7 +41,6 @@ def dbRoom(
     room_list = [
         room_101,
         room_102,
-        room_103,
         room_201,
         room_202,
         room_203,
@@ -118,7 +116,6 @@ def dbMiter(
     rate,
     room_101,
     room_102,
-    room_103,
     room_201,
     room_202,
     room_203,
@@ -133,7 +130,6 @@ def dbMiter(
     room_list = [
         room_101,
         room_102,
-        room_103,
         room_201,
         room_202,
         room_203,
@@ -152,15 +148,10 @@ def dbMiter(
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSERT INTO `test_elec_bill`.`miter` ( `1st_sub1`, `1st_sub2`,`1st_main`, `2nd_sub1`, `2nd_sub2`,`2nd_main`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+        "INSERT INTO `test_elec_bill`.`miter` ( `1st_sub1`,`1st_main`, `2nd_sub1`, `2nd_sub2`,`2nd_main`, `4th_sub1`, `4th_sub2`, `4th_sub3`, `4th_sub4`,  `month`, `year`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
         tuple(room_units),
     )
 
-    collect = conn.cursor()
-    collect.execute(
-        "SELECT * FROM `test_elec_bill`.`miter` WHERE `month`=%s AND `year`=%s;",
-        (pmon, year.get()),
-    )
     try:
         pdata = collect.fetchall()[-1][1:11]
     except IndexError:
@@ -184,7 +175,6 @@ def dbMiter(
         pmon,
         room_101,
         room_102,
-        room_103,
         room_201,
         room_202,
         room_203,
